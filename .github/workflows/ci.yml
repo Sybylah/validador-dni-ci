@@ -1,4 +1,5 @@
 
+
 name: CI — Validador DNI
 
 on:
@@ -12,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Descargar código
+      - name: Descargar el código fuente
         uses: actions/checkout@v7
 
       - name: Configurar Java
@@ -22,12 +23,36 @@ jobs:
           java-version: '21'
           cache: maven
 
-      - name: Ejecutar pruebas
+      - name: Ejecutar los tests
         run: mvn test -B
 
-      - name: Guardar informe de pruebas
+      - name: Guardar el informe de tests
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: informe-tests
           path: target/surefire-reports/
+
+  empaquetar:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Descargar el código fuente
+        uses: actions/checkout@v7
+
+      - name: Configurar Java
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Empaquetar el JAR
+        run: mvn package -DskipTests -B
+
+      - name: Guardar el JAR como artefacto
+        uses: actions/upload-artifact@v4
+        with:
+          name: validador-dni-jar
+          path: target/validador-dni.jar

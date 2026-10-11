@@ -16,7 +16,7 @@ public class ValidadorDni {
             return false;
         }
 
-        dni = dni.trim();
+        dni = dni.trim().toUpperCase();
 
         if (!dni.matches("\\d{8}[A-Z]")) {
             return false;
